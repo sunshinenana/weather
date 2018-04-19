@@ -88,4 +88,10 @@ Page({
       todayDate: `${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()} 今天`
     })
   },
+  onTapDayWeather() {
+    wx.showToast();//点击事件
+    wx.navigateTo({
+      url: '/pages/list/list',
+    })
+  }
 })
