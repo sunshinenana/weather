@@ -18,6 +18,8 @@ const weatherColorMap = {
   'snow': '#aae1fc'
 }
 
+var QQMapWX = require('../../libs/qqmap-wx-jssdk.js');
+var qqmapsdk;
 Page({
   data: {
     nowTemp: "",
@@ -26,6 +28,9 @@ Page({
     hourlyWeather:[]
   },
   onLoad() {
+    this.qqmapsdk = new QQMapWX({
+      key: 'EAXBZ-33R3X-AA64F-7FIPQ-BY27J-5UF5B' // 必填
+    });
     this.getNow()
   },
   onPullDownRefresh() {
@@ -40,7 +45,6 @@ Page({
         city: '上海市'
       },
       success: res => {
-        console.log(res)
         let result = res.data.result
         this.setNow(result)
         this.setHourlyWeather(result)
@@ -93,5 +97,27 @@ Page({
     wx.navigateTo({
       url: '/pages/list/list',
     })
-  }
+  },
+  onTapLocation() {
+    wx.getLocation({
+      success: res => {
+        this.getCityLocation(res);
+      },
+    })
+  },
+  getCityLocation(lres) {
+    this.qqmapsdk.reverseGeocoder({
+      location: {
+        latitude: lres.latitude,
+        longitude: lres.logitude
+      },
+      success: function (res) {
+        console.log(res)
+        let city = res.result.address_component.city
+        this.setData({
+          city: city,
+        })
+      }
+    });
+  },
 })
